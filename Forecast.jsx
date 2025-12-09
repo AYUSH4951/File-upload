@@ -164,19 +164,39 @@ function predictNext3Days(current, daily, trans) {
   for (let i = 1; i <= 3; i++) {
     const humidity = current?.relative_humidity_2m ?? 0;
     const wind = current?.wind_speed_10m ?? 0;
-    const rain = daily?.precipitation_probability_max?.[i] ?? 0;
+    const rainProbability = daily?.precipitation_probability_max?.[i] ?? 0;
     const code = daily?.weather_code?.[i] ?? 0;
+    const maxTemp = daily?.temperature_2m_max?.[i] ?? 0;
+    const minTemp = daily?.temperature_2m_min?.[i] ?? 0;
 
     let type = "stable";
+    let probability = 0;
 
-    if (rain > 60 || code >= 61 || humidity > 80) type = "highRain";
-    else if (rain > 30 || humidity > 60) type = "mediumRain";
-    else if (wind > 25) type = "mild";
+    if (rainProbability > 60 || code >= 61 || humidity > 80) {
+      type = "highRain";
+      probability = rainProbability > 60 ? rainProbability : 65;
+    } else if (rainProbability > 30 || humidity > 60) {
+      type = "mediumRain";
+      probability = rainProbability > 30 ? rainProbability : 40;
+    } else if (wind > 25) {
+      type = "mild";
+      probability = 45;
+    } else {
+      type = "stable";
+      probability = 85;
+    }
 
     const list = trans.dynamic[type];
-    const text = list[Math.floor(Math.random() * list.length)];
+    const text = list[i % list.length]; // Use day index for consistent prediction
 
-    results.push({ day: i, text });
+    results.push({
+      day: i,
+      text,
+      probability: Math.round(probability),
+      maxTemp: Math.round(maxTemp),
+      minTemp: Math.round(minTemp),
+      rainChance: rainProbability,
+    });
   }
 
   return results;
@@ -285,8 +305,6 @@ export default function Forecast() {
         --------------------------- */}
         {tab === "overview" && (
           <>
-            <WeatherGraph data15={graph.data15} data30={graph.data30} />
-
             <div className="forecast-card">
               <h2><Sun /> {trans.currentWeather}</h2>
 
@@ -309,6 +327,8 @@ export default function Forecast() {
               </div>
             </div>
 
+            <WeatherGraph data15={graph.data15} data30={graph.data30} />
+
             {/* SMART PREDICTION */}
             <div className="forecast-card">
               <h2><Radar /> {trans.smartPrediction}</h2>
@@ -316,7 +336,15 @@ export default function Forecast() {
               <div className="forecast-prediction-list">
                 {prediction.map((p) => (
                   <div key={p.day} className="forecast-prediction-item">
-                    <strong>Day {p.day}:</strong> {p.text}
+                    <div className="prediction-header">
+                      <strong>Day {p.day}:</strong>
+                      <span className="prediction-probability">{p.probability}% Confidence</span>
+                    </div>
+                    <p className="prediction-text">{p.text}</p>
+                    <div className="prediction-details">
+                      <span>🌡️ {p.minTemp}°C - {p.maxTemp}°C</span>
+                      <span>💧 Rain: {p.rainChance}%</span>
+                    </div>
                   </div>
                 ))}
               </div>
