@@ -210,6 +210,7 @@
   font-size: 14px;
   color: #374151;
   line-height: 1.5;
+  white-space: pre-line; /* For multiline actions */
 }
 
 .prediction-details {
@@ -220,6 +221,52 @@
   margin-top: 10px;
   padding-top: 10px;
   border-top: 1px solid #e5e7eb;
+}
+
+/* ------------------------------- */
+/* 🔥 NEW: CROP RECOMMENDATION CSS */
+/* ------------------------------- */
+
+.crop-recommendation-item {
+  background: #eef7ee;
+  padding: 18px;
+  margin-top: 14px;
+  border-radius: 10px;
+  border-left: 4px solid #059669;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.crop-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 16px;
+  color: #065f46;
+}
+
+.crop-suitability {
+  background: #d1fae5;
+  color: #065f46;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.crop-temp-details {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.crop-advice-text {
+  margin-top: 10px;
+  font-size: 14px;
+  white-space: pre-line;
+  color: #374151;
+  line-height: 1.5;
 }
 
 /* ----------------- */
@@ -234,13 +281,16 @@
   .forecast-details-grid {
     grid-template-columns: 1fr;
   }
+
+  .crop-temp-details {
+    flex-direction: column;
+  }
 }
 
 /* ------------------------------------------------------ */
-/* NEW CSS ADDED FOR GOOGLE WEATHER TABS + GRAPH COMPONENT */
+/* TABS + GRAPH COMPONENT */
 /* ------------------------------------------------------ */
 
-/* TABS */
 .weather-tabs {
   display: flex;
   gap: 10px;
@@ -266,7 +316,6 @@
   border-color: #2563eb;
 }
 
-/* GRAPH CARD */
 .weather-graph-card {
   background: white;
   padding: 18px;
@@ -309,6 +358,7 @@
 }
 
 /* TODAY/TOMORROW BIG TEMP */
+
 .forecast-temp-big {
   text-align: center;
   font-size: 36px;
